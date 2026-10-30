@@ -1,0 +1,20 @@
+:root {
+  --bg: #07111f;
+  --bg-2: #0a1628;
+  --panel: #0d1b2a;
+  --panel-2: #12233a;
+  --border: #1e3a5f;
+  --border-2: #2a4a73;
+  --accent: #2f81f7;
+  --accent-2: #22d3ee;
+  --text: #e6f1ff;
+  --text-2: #8ba3c7;
+  --muted: #5b7191;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --success: #22c55e;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --font: "Microsoft YaHei", "PingFang SC", "Inter", system-ui, sans-serif;
+  --mono: "JetBrains Mono", "Consolas", monospace;
+}

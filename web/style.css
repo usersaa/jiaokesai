@@ -1,0 +1,244 @@
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-size: 13px;
+  color: #2c2c2a;
+  background: #f4f3ef;
+  overflow: hidden;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* ---------- 顶部工具栏 ---------- */
+#topbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #ffffff;
+  border-bottom: 1px solid #dcdad2;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+}
+
+#topbar .title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0d3b66;
+  margin-right: 10px;
+  white-space: nowrap;
+}
+
+#topbar .sep {
+  width: 1px;
+  height: 20px;
+  background: #dcdad2;
+  margin: 0 4px;
+}
+
+button {
+  font-family: inherit;
+  font-size: 12px;
+  padding: 6px 12px;
+  border: 1px solid #c9c7bd;
+  background: #fff;
+  color: #2c2c2a;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+
+button:hover { background: #f0efe9; border-color: #a8a69c; }
+
+button.primary {
+  background: #0d3b66;
+  border-color: #0d3b66;
+  color: #fff;
+}
+
+button.primary:hover { background: #14507f; }
+
+button.active {
+  background: #c9302c;
+  border-color: #c9302c;
+  color: #fff;
+}
+
+button:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ---------- 主体 ---------- */
+#main {
+  flex: 1 1 auto;
+  display: flex;
+  min-height: 0;
+}
+
+#map-wrap {
+  flex: 1 1 auto;
+  position: relative;
+  min-width: 0;
+}
+
+#container {
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- 侧栏 ---------- */
+#sidebar {
+  flex: 0 0 300px;
+  background: #fff;
+  border-left: 1px solid #dcdad2;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#sidebar h3 {
+  margin: 0;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0d3b66;
+  border-bottom: 1px solid #eceae3;
+  background: #faf9f5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#station-list {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 6px;
+}
+
+.station-item {
+  padding: 8px 10px;
+  border: 1px solid #eceae3;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  background: #fff;
+  transition: all .15s;
+}
+
+.station-item:hover { border-color: #a8a69c; background: #faf9f5; }
+.station-item.selected { border-color: #0d3b66; background: #eef3f8; }
+
+.station-item .row1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.station-item .nm {
+  font-weight: 600;
+  font-size: 12.5px;
+  color: #2c2c2a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.station-item .tag {
+  font-size: 10.5px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  color: #fff;
+  flex: 0 0 auto;
+}
+
+.station-item .meta {
+  font-size: 11px;
+  color: #7a7870;
+  margin-top: 3px;
+  font-family: Consolas, monospace;
+}
+
+#empty-hint {
+  padding: 24px 16px;
+  text-align: center;
+  color: #7a7870;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+/* ---------- 底部状态条 ---------- */
+#statusbar {
+  flex: 0 0 auto;
+  padding: 6px 14px;
+  background: #ffffff;
+  border-top: 1px solid #dcdad2;
+  font-size: 11.5px;
+  color: #5f5e5a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+#statusbar .left { flex: 1 1 auto; }
+#statusbar .right { flex: 0 0 auto; font-family: Consolas, monospace; }
+
+/* ---------- 标定模式提示 ---------- */
+#edit-banner {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #c9302c;
+  color: #fff;
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  display: none;
+  z-index: 200;
+  white-space: nowrap;
+}
+
+#edit-banner.show { display: block; }
+
+/* ---------- 地图上的自定义标记 ---------- */
+.p-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 600;
+  font-size: 11px;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.35);
+  transition: transform .15s;
+  font-family: Consolas, monospace;
+}
+
+.p-marker:hover { transform: scale(1.15); }
+
+.p-marker.selected {
+  outline: 3px solid #c9302c;
+  outline-offset: 1px;
+}
+
+.p-label {
+  font-size: 11px;
+  color: #2c2c2a;
+  background: rgba(255,255,255,.88);
+  padding: 1px 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+  border: 1px solid rgba(0,0,0,.08);
+}

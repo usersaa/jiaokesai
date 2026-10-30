@@ -1,0 +1,80 @@
+{
+  "instance": {
+    "stations": [
+      "P01",
+      "P04",
+      "P08"
+    ],
+    "caps": [
+      12,
+      12,
+      12
+    ],
+    "init": [
+      8,
+      8,
+      8
+    ],
+    "steps": 4,
+    "truck_capacity": 8,
+    "coupon": false
+  },
+  "exact": {
+    "reward": -2.5835588567576155,
+    "sequence": [
+      0,
+      8,
+      0,
+      0
+    ],
+    "dp_states": 7
+  },
+  "greedy": {
+    "reward": -3.0293991729370613,
+    "gap": 0.17256828309264008,
+    "metrics": {
+      "steps": 4,
+      "demand_total": 44.071289313792526,
+      "served_rides": 38.481388431085485,
+      "service_rate": 0.8731623020396267,
+      "bike_shortage": 5.589900882707045,
+      "return_shortage": 1.5358275858868558,
+      "total_shortage": 7.125728468593901,
+      "truck_trips": 2,
+      "truck_time_min": 13.375209485383369,
+      "coupon_cost_yuan": 0.0,
+      "total_cost_yuan": 13.375209485383369,
+      "unit_service_cost": 0.3475760628891134,
+      "agent_shortage": 0.0,
+      "env_deficit": 7.125728468593901,
+      "imbalance_point": 0.6395403008340848,
+      "imbalance_flow": 0.3073800138551433,
+      "seed": 0,
+      "day_type": 0
+    }
+  },
+  "ppo": {
+    "reward": -2.5835588567576155,
+    "gap": 0.0,
+    "metrics": {
+      "steps": 4,
+      "demand_total": 44.071289313792526,
+      "served_rides": 38.481388431085485,
+      "service_rate": 0.8731623020396267,
+      "bike_shortage": 5.589900882707045,
+      "return_shortage": 1.5358275858868558,
+      "total_shortage": 7.125728468593901,
+      "truck_trips": 1,
+      "truck_time_min": 6.6876047426916845,
+      "coupon_cost_yuan": 0.0,
+      "total_cost_yuan": 6.6876047426916845,
+      "unit_service_cost": 0.1737880314445567,
+      "agent_shortage": 0.0,
+      "env_deficit": 7.125728468593901,
+      "imbalance_point": 0.6620774620298008,
+      "imbalance_flow": 0.316948071933694,
+      "seed": 0,
+      "day_type": 0
+    }
+  }
+}

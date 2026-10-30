@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>兰州交通大学 · 校园共享电单车 P 点标定地图</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- 配置必须先于 loader.js 加载 -->
+  <script src="config.js"></script>
+  <script type="text/javascript">
+    window._AMapSecurityConfig = { securityJsCode: window.AMAP_CONFIG.securityJsCode };
+  </script>
+  <script src="https://webapi.amap.com/loader.js"></script>
+</head>
+<body>
+<div id="app">
+
+  <div id="topbar">
+    <span class="title" id="campus-title">校园共享电单车 P 点标定</span>
+    <span class="sep"></span>
+    <button id="btn-edit">标定模式</button>
+    <button id="btn-clear">清空</button>
+    <span class="sep"></span>
+    <button id="btn-2d">2D</button>
+    <button id="btn-3d">3D</button>
+    <button id="btn-sat">卫星底图</button>
+    <button id="btn-fit">复位视野</button>
+    <span class="sep"></span>
+    <button id="btn-export">导出 JSON</button>
+    <button id="btn-import">导入 JSON</button>
+    <input type="file" id="file-input" accept=".json" style="display:none" />
+  </div>
+
+  <div id="main">
+    <div id="map-wrap">
+      <div id="container"></div>
+      <div id="edit-banner">标定模式：在地图上点击即可新增 P 点（按 Esc 退出）</div>
+    </div>
+
+    <div id="sidebar">
+      <h3>
+        <span>P 点列表</span>
+        <span id="station-count" style="font-weight:400;color:#7a7870;">0 个</span>
+      </h3>
+      <div id="station-list">
+        <div id="empty-hint">
+          暂无点位。<br />
+          点击「标定模式」后，<br />
+          在地图上逐个点出 P 点即可。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="statusbar">
+    <span class="left" id="status-text">地图加载中…</span>
+    <span class="right" id="cursor-pos">—</span>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

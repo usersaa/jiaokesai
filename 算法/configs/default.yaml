@@ -1,0 +1,168 @@
+# ============================================================
+# 兰州交通大学校园共享电单车调度 —— 默认配置
+#
+# 说明：
+#   - 标注 [公告] 的参数来自校方公告/运营商公开资料，可直接使用；
+#   - 标注 [文献] 的参数来自论文，可直接使用；
+#   - 标注 [TODO] 的参数尚无实测数据，当前取占位值，采集后替换；
+#   - 所有距离单位为米，时间单位为分钟，金额单位为元。
+# ============================================================
+
+project:
+  name: lzjtu-campus-ebike-sched
+  seed: 42
+  out_dir: outputs
+
+# ---------------- 校区 ----------------
+campus:
+  name: "兰州交通大学（安宁校区）"
+  center_lng: 103.723371      # [公告/高德] GCJ-02
+  center_lat: 36.105326
+
+# ---------------- 时间结构 ----------------
+time:
+  day_start: "06:30"          # 日内调度起点
+  day_end: "23:30"            # 日内调度终点
+  step_minutes: 10            # [文献 L3] 10 min 步长
+  night_start: "23:30"        # 夜间静态调度窗口
+  night_end: "06:30"
+  day_type: weekday           # weekday | weekend（写入状态）
+
+# ---------------- 系统参数 ----------------
+system:
+  total_bikes: 500            # [公告] 首批投放 500 辆
+  speed_kmh: 15               # [公告] 校内限速 15 km/h
+  rho_soc: 0.85               # [TODO] 电量/故障导致的可用率，待观测
+  gamma_single_ride: 0.35     # [TODO] 单次付费用户占比，待问卷+访谈
+  capacity_m2_per_bike: 1.8   # [文献/经验] 电动自行车停车位 1.5-2.0 m²/辆
+  default_capacity: 30        # [TODO] 默认点位容量，待踏勘
+
+# ---------------- 运维车 ----------------
+truck:
+  count: 1                    # [文献/文档] 12 点位 × 1 辆
+  capacity: 20                # [TODO] 车载量，待访谈
+  speed_kmh: 15               # [TODO] 校内运维车速度
+  load_min_per_bike: 0.5      # [TODO] 单辆装卸时间
+  swap_minutes_per_step: 2.0  # [TODO] 每步换电占用时间
+  alternate_pick_drop: true   # [文献 L3] 取/放交替
+
+# ---------------- 决策参数 ----------------
+decision:
+  delta_critical: 0.2         # [文献 L3] 临界阈值（相对容量）
+  qty_tiers_bikes: [10, 20]   # [文档] 搬运数量档位
+  coupon_tiers_yuan: [0.5, 1.0]  # [文档] 激励额度档位
+  coupon_budget_daily: 200.0  # [TODO] 日激励预算
+  max_coupon_per_step: 1.0    # 单步单点位最高券额
+
+# ---------------- 需求侧 ----------------
+demand:
+  baseline_rate_per_hour: 4.0 # [TODO] 平峰基线借车率（人次/小时/点）
+  pulse_gain: 30.0            # [TODO] 脉冲相对基线的放大倍数
+  smooth_day: 1.0             # 日内平滑因子（平峰）
+  smooth_night: 0.15          # 夜间平滑因子
+  noise_cv: 0.15              # [TODO] 日间需求随机波动系数（训练时抽样）
+  weekend_factor: 0.60        # [TODO] 周末需求折减系数
+  kernel: gaussian            # 脉冲核：gaussian | exponential
+
+  # 七个需求脉冲（[文档] 1.2 节，时间取自现行课段）
+  pulses:
+    - {id: P1, start: "07:40", peak: "07:50", end: "08:00", width_min: 10, label: "上午第一节课前"}
+    - {id: P2, start: "09:50", peak: "10:00", end: "10:10", width_min: 10, label: "课间换教室"}
+    - {id: P3, start: "12:00", peak: "12:15", end: "12:30", width_min: 15, label: "上午下课"}
+    - {id: P4, start: "14:10", peak: "14:20", end: "14:30", width_min: 10, label: "下午第一节课前"}
+    - {id: P5, start: "16:20", peak: "16:30", end: "16:40", width_min: 10, label: "课间换教室"}
+    - {id: P6, start: "18:30", peak: "18:45", end: "19:00", width_min: 15, label: "下午下课"}
+    - {id: P7, start: "21:20", peak: "21:35", end: "21:50", width_min: 15, label: "晚课结束"}
+
+  # 功能—脉冲借车强度矩阵 A_i^r 的归一化系数
+  # 行=点位功能，列=脉冲；值越大表示该功能点位在该脉冲的借车（净流出）越强
+  # [TODO] 待观测标定；当前为基于校园作息逻辑的占位值
+  function_origin_intensity:
+    dorm:    {P1: 1.00, P2: 0.15, P3: 0.30, P4: 0.80, P5: 0.15, P6: 0.30, P7: 0.20}
+    teach:   {P1: 0.10, P2: 0.80, P3: 1.00, P4: 0.20, P5: 0.80, P6: 1.00, P7: 1.00}
+    canteen: {P1: 0.05, P2: 0.10, P3: 0.20, P4: 0.05, P5: 0.10, P6: 0.20, P7: 0.10}
+    library: {P1: 0.10, P2: 0.30, P3: 0.20, P4: 0.10, P5: 0.30, P6: 0.20, P7: 0.20}
+    gate:    {P1: 0.30, P2: 0.20, P3: 0.30, P4: 0.30, P5: 0.20, P6: 0.30, P7: 0.20}
+    sport:   {P1: 0.10, P2: 0.10, P3: 0.20, P4: 0.10, P5: 0.30, P6: 0.20, P7: 0.10}
+
+  # 目的地吸引量 A_j（OD 分配用）
+  # [TODO] 待用 POI 数/建筑面积标定；当前为占位值
+  function_attraction:
+    dorm: 0.60
+    teach: 1.00
+    canteen: 0.80
+    library: 0.70
+    gate: 0.40
+    sport: 0.40
+
+  # 距离衰减 f(d)：lognormal | exponential
+  distance_decay:
+    type: lognormal
+    d0_m: 400                 # [文献 L4] 步行可接受距离 400 m
+    sigma: 0.8
+
+  walk_speed_m_per_min: 75    # [TODO] 步行速度
+  max_walk_min: 8             # [TODO] 最大可接受移步时间
+
+# ---------------- 下层用户选择 ----------------
+choice:
+  lambda_per_min: 0.15        # [TODO] 移步意愿衰减系数，待 SP 问卷
+  vot_yuan_per_min: 0.50      # [TODO] 时间价值，待 SP 问卷
+  competition: true           # 是否启用竞争型取车概率 f_j
+
+# ---------------- 成本与奖励 ----------------
+cost:
+  c_b_shortage: 3.0           # [TODO] 单位借车短缺损失 元/次
+  c_r_shortage: 2.0           # [TODO] 单位还车短缺损失 元/次
+  c_truck_min: 1.0            # [TODO] 运维车作业成本 元/min
+  c_coupon_per_yuan: 1.0      # 每 1 元券的实际支出
+  weights:
+    agent: 1.0                # 智能体导致短缺
+    env: 0.3                  # 环境赤字（不可控，权重较低）
+    truck: 0.2                # 搬运时间
+    incentive: 0.2            # 激励支出
+  normalize:
+    shortage_scale: 10.0      # 短缺归一化尺度（人次）
+    truck_time_scale: 30.0    # 作业时间归一化尺度（min）
+    incentive_scale: 10.0     # 激励支出归一化尺度（元）
+  reward_scale: 10.0          # 奖励整体缩放（改善 PPO 梯度）
+
+# ---------------- PPO ----------------
+ppo:
+  total_timesteps: 200000
+  n_steps: 1024
+  batch_size: 256
+  learning_rate: 0.0003
+  gamma: 0.95                 # [文献 L3/文档] 10 min 步长，有效视野约 20 步
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  net_arch: [128, 128]        # 共享主干
+  policy: MlpPolicy
+  action_encoding: discrete    # discrete（推荐）| multidiscrete
+  train_days: 4
+  val_days: 1
+  test_days: 1
+  seeds: [0, 1, 2]
+  eval_episodes: 3
+  device: auto
+
+# ---------------- 夜间静态 MILP ----------------
+night:
+  solver: SCIP                # SCIP | CBC
+  time_limit_s: 30
+  target_rule: morning_demand # 次日 P1 期望需求
+  morning_buffer: 1.5          # 早高峰需求缓冲系数
+  travel_cost_per_min: 1.0
+  inventory_weight: 10.0       # 库存偏差权重（相对行驶成本）
+  depot_station: 0            # 运维车夜间停放点（站点索引）
+
+# ---------------- 实验 ----------------
+experiment:
+  out_dir: outputs
+  baselines: [noop, random, greedy, pure_truck, pure_coupon, sa]
+  sa_iterations: 60
+  sa_init_temp: 1.0
+  sa_cooling: 0.95
